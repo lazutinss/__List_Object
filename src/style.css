@@ -1,0 +1,50 @@
+.inner_block{
+    background: #fff;
+    margin: 0 10px;
+    max-height: 440px;
+    overflow-y: scroll;
+}
+.slds-col{
+    cursor: pointer;
+}
+.main_block{
+    position: relative;
+    width: 100%;
+    height: 600px;
+}
+.block_obj{
+    position: absolute;
+    width: 18%;
+    top: 1%;
+    left: 0;
+    margin: 0 10px;
+}
+.field_block{
+    position: absolute;
+    width: 18%;
+    top: 1%;
+    left: 21%;
+    margin: 0 10px;
+}
+.field_custom_block{
+    position: absolute;
+    width: 18%;
+    top: 1%;
+    left: 40%;
+    margin: 0 10px;
+}
+.field_param_block{
+    position: absolute;
+    width: 18%;
+    top: 1%;
+    left: 57%;
+    margin: 0 10px;
+
+}
+.add_field_block{
+    position: absolute;
+    width: 18%;
+    top: 1%;
+    left: 85%;
+    margin: 0 10px;
+}
