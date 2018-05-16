@@ -8,60 +8,69 @@ public with sharing class MyController {
     public String               showBlockAddField{get; set;}//FLAG SHOW ADD FIELD
     public String               selectedDeleteField{get; set;}//SELECTED DELETE CUSTOM FIELD
     public Schema.DisplayType   fieldType {get;set;}//FIELD TYPE ONCLICK
-    public List<String>         fieldsNameList {get;set;}//LIST OF OBJECT FIELDS
+    public List<String>         fieldsNameList {get;set;}//LIST OF left OBJECT FIELDS
     public List<String>         customFieldsNameList {get;set;}//LIST OF OBJECT CUSTOM FIELDS
     public List<String>         fieldNameClickList{get;set;}//LIST OF OBJECT FIELD PARAM
-    public List<List<String>>   allFieldsList{get;set;}//LIST OF LIST fieldNameClickList
+    public List<List<String>>   FieldsParamList{get;set;}//LIST OF LIST fieldNameClickList - поменять название
+
+    public List<String>         leftFieldSelected{get; set;}//LIST SELECTED FIELDS LEFT BLOCK
+    public List<string>         rightFieldSelected{get;set;}//LIST SELECTED FIELDS RIGHT BLOCK
+    Set<string>                 leftValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
+    Set<string>                 rightValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
 
     public MyController(){
-        allFieldsList       = new List<List<String>>();
-        showFields          = false;
-        showBlockFieldParam = 'No';
-        showBlockAddField   = 'No';
-        //System.debug(showFields);
+        FieldsParamList         = new List<List<String>>();
+        showFields              = false;
+        showBlockFieldParam     = 'No';
+        showBlockAddField       = 'No';
     }
 
-//    public String getobj(){
-//        return obj;
-//    }
-//    public void                 setobj(String obj){
-//        this.obj = obj;
-//    }
+
     //LIST OF OBJECTS
     public List<SelectOption> getObjects(){
         List<Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe().Values();
         List<SelectOption> listOfObject = new List<SelectOption>();
 
-        for(Schema.SObjectType keyListName : globalDescribe){
-            listOfObject.add(new SelectOption(keyListName.getDescribe().getName(),keyListName.getDescribe().getName()));
-        }
+            for(Schema.SObjectType keyListName : globalDescribe){
+                listOfObject.add(new SelectOption(keyListName.getDescribe().getName(),keyListName.getDescribe().getName()));
+            }
         return listOfObject;
     }
+
+//===============================================TAB1=========================
 
 //LIST OF OBJECT FIELDS
     public void showListFields(){
         showFields = true;
-        allFieldsList.clear();
-        //System.debug(showFields);
+        FieldsParamList.clear();
+        rightValues.clear();
+        leftValues.clear();
         fieldsNameList = new List<String>();
         customFieldsNameList = new List<String>();
-        Map<String , Schema.SObjectType> globalDescription = Schema.getGlobalDescribe();
+        Map<String, Schema.SObjectType> globalDescription = Schema.getGlobalDescribe();
         //System.debug('Selected Object is ' + obj);
         Schema.sObjectType objType = globalDescription.get(selectedObj);
         //System.debug('Выбранный объект ' + objType);
         Schema.DescribeSObjectResult r1 = objType.getDescribe();
         Map<String , Schema.SObjectField> mapFieldList = r1.fields.getMap();
         //System.debug(mapFieldList);
-        for(Schema.SObjectField field : mapFieldList.values())
-        {
-            Schema.DescribeFieldResult fieldResult = field.getDescribe();
-            if(String.valueOf(fieldResult.getName()).endsWith('__c')){
-                //System.debug(fieldResult.getName());
-                customFieldsNameList.add(fieldResult.getName());
+            for(Schema.SObjectField field : mapFieldList.values()){
+
+                Schema.DescribeFieldResult fieldResult = field.getDescribe();
+                if(String.valueOf(fieldResult.getName()).endsWith('__c')){
+                    //System.debug(fieldResult.getName());
+                    customFieldsNameList.add(fieldResult.getName());//заменить на метож custom
+                }
+                fieldsNameList.add(fieldResult.getName());
             }
-            fieldsNameList.add(fieldResult.getName());
-        }
+            for (Schema.SObjectField leftField : mapFieldList.values()) {
+
+                Schema.DescribeFieldResult fieldResult2 = leftField.getDescribe();
+                leftValues.add(fieldResult2.getName());
+            }
+
     }
+
 //SHOW FIELD PARAMERTRES
     public void showFieldParam() {
         fieldNameClickList = new List<String>();
@@ -73,7 +82,7 @@ public with sharing class MyController {
         fieldNameClickList.add(clickedFieldName);
         fieldNameClickList.add(fieldLabel);
         fieldNameClickList.add(String.valueOf(fieldType));
-        allFieldsList.add(fieldNameClickList);
+        FieldsParamList.add(fieldNameClickList);
     }
 
     public Schema.DescribeFieldResult getFieldDescribe(String objectName, String field){
@@ -102,17 +111,59 @@ public with sharing class MyController {
         customField.type_x = 'Checkbox';
         fields.add(customField);
         List<MetadataService.SaveResult> results = service.createMetadata(new MetadataService.Metadata[] { customField });
-       
+
     }
 //DELETE FIELD
     public void deleteField()
     {
-        System.debug(selectedDeleteField);
+        //System.debug(selectedDeleteField);
         MetadataService.MetadataPort service = new MetadataService.MetadataPort();
         service.SessionHeader = new MetadataService.SessionHeader_element();
         service.SessionHeader.sessionId = UserInfo.getSessionId();
         List<MetadataService.DeleteResult> results =
         service.deleteMetadata('CustomField', new String[] { selectedObj + '.' + selectedDeleteField });
 
+    }
+
+//================================TAB 2==============================================
+    public PageReference selectClick() {
+        rightFieldSelected.clear();
+        for(String leftSelectList : leftFieldSelected){
+            leftvalues.remove(leftSelectList);
+            rightvalues.add(leftSelectList);
+        }
+        return null;
+    }
+
+    public PageReference unselectClick() {
+        leftFieldSelected.clear();
+        for (String rightSelectList : rightFieldSelected  ) {
+            rightvalues.remove(rightSelectList);
+            leftvalues.add(rightSelectList);
+        }
+        return null;
+    }
+
+   // LIST OF SELECTED OBJECT FIELDS - LEFT BLOCK
+    public List<SelectOption> getleftBlockFields(){
+        List<SelectOption> options = new List<SelectOption>();
+        List<string> tempList = new List<String>();
+        tempList.addAll(leftValues);
+        tempList.sort();
+            for (String key : tempList) {
+                options.add(new SelectOption(key, key));
+            }
+        return options;
+    }
+
+    public List<SelectOption> getRightBlockFields(){
+        List<SelectOption> options1 = new List<SelectOption>();
+        List<string> tempList = new List<String>();
+        tempList.addAll(rightValues);
+        tempList.sort();
+            for(String s : tempList){
+                options1.add(new SelectOption(s,s));
+            }
+        return options1;
     }
 }

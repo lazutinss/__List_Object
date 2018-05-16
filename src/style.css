@@ -7,44 +7,15 @@
 .slds-col{
     cursor: pointer;
 }
+.slds-size_1-of-3{
+    width: 20% !important;
+}
+.slds-size_2-of-3{
+    width: 79% !important;
+}
+
 .main_block{
     position: relative;
     width: 100%;
     height: 600px;
-}
-.block_obj{
-    position: absolute;
-    width: 18%;
-    top: 1%;
-    left: 0;
-    margin: 0 10px;
-}
-.field_block{
-    position: absolute;
-    width: 18%;
-    top: 1%;
-    left: 21%;
-    margin: 0 10px;
-}
-.field_custom_block{
-    position: absolute;
-    width: 18%;
-    top: 1%;
-    left: 40%;
-    margin: 0 10px;
-}
-.field_param_block{
-    position: absolute;
-    width: 18%;
-    top: 1%;
-    left: 57%;
-    margin: 0 10px;
-
-}
-.add_field_block{
-    position: absolute;
-    width: 18%;
-    top: 1%;
-    left: 85%;
-    margin: 0 10px;
 }
