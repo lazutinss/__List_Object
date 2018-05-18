@@ -7,127 +7,151 @@
         <apex:slds />
         <apex:stylesheet value="{!URLFOR($Resource.style)}"/>
         <apex:includeScript value="{!URLFOR($Resource.myScript)}"/>
-        <apex:includeScript value="{!URLFOR($Resource.jQuery)}"/>
+        <apex:includeScript value="{!$Resource.jQuery}"/>
+        <style>
+            .bPageBlock .detailList .dataCol{
+                width: 100% !important;
+            }
+            .table_caption{
+                background: rgb(250, 250, 249);
+                height: 20px;
+            }
+            .select_width{
+                width: 100%;
+            }
+            .inner_block{
+                background: #fff;
+                margin: 0 10px;
+                max-height: 440px;
+                overflow-y: scroll;
+            }
+            .main_block{
+                position: relative;
+                width: 100%;
+                height: 800px;
+            }
+            .tab_height{
+                height: 740px;
+            }
+            .slds-col>.button_img{
+                 width: 50px;
+                 height: 50px;
+                 float: left;
+                 margin: 20px;
+             }
+            .slds-col>.button_img:first-child{
+
+                margin-top: 130px;
+            }
+
+        </style>
     </head>
     <body>
     <apex:pageBlock id="pageBlock" >
         <div class="slds-grid slds-gutters main_block">
-            <div class="slds-col slds-size_3-of-12">
 
-                <!--LIST OF OBJECTS-->
-                <div class="slds-col block_obj">
-                    <apex:pageBlockSection >
-                        <apex:form >
-                            <apex:actionFunction name="showFields" action="{!showListFields}" rerender="fields, pageBlock, selectedList">
-                                <apex:param name="selectedObject" value="{!selectedObj}" assignTo="{!selectedObj}"/>
-                            </apex:actionFunction>
-                            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                                <thead>
-                                <tr class="slds-text-title_caps">
-                                    <th><div class="slds-truncate" title="Opportunity Name">Object</div></th>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <th>
-                                        <apex:pageBlockSectionItem >
-                                            <apex:selectList size="36" value="{!selectedObj}"  onclick="showFieldList(this.value);" styleClass="inner_block">
-                                                <apex:selectOptions value="{!objects}" />
-                                            </apex:selectList>
-                                        </apex:pageBlockSectionItem>
-                                    </th>
-                                </tr>
-                            </table>
-                        </apex:form>
-                    </apex:pageBlockSection>
-                </div>
+            <!--LIST OF OBJECTS-->
+             <div class="slds-col slds-size_3-of-12">
+                 <apex:pageBlockSection >
+                     <apex:form >
+                         <apex:actionFunction name="showFields" action="{!showListFields}" rerender="fields, customFields, fieldParam, addField, selectedList">
+                             <apex:param name="selectedObject" value="{!selectedObject}" assignTo="{!selectedObject}"/>
+                         </apex:actionFunction>
+                         <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                             <thead>
+                             <tr class="slds-text-title_caps">
+                                 <th><div class="slds-truncate" title="Opportunity Name">Object</div></th>
+                             </tr>
+                             </thead>
+                             <tr>
+                                 <th>
+                                     <div class="slds-truncate">
+                                         <apex:pageBlockSectionItem >
+                                             <apex:selectList size="36"
+                                                              value="{!selectedObject}"
+                                                              onclick="showFieldList(this.value);"
+                                                              styleClass="select_width">
+                                                 <apex:selectOptions value="{!objects}" />
+                                             </apex:selectList>
+                                         </apex:pageBlockSectionItem>
+                                     </div>
+                                 </th>
+                             </tr>
+                         </table>
+                     </apex:form>
+                 </apex:pageBlockSection>
             </div>
             <div class="slds-col slds-size_9-of-12">
-                <div class="slds-tabs_default">
-                    <ul class="slds-tabs_default__nav" role="tablist">
-                        <li class="slds-tabs_default__item " title="Item One" role="presentation">
-                            <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Item One</a>
+                <div class="slds-tabs_default tabs">
+                    <ul class="slds-tabs_default__nav tabs_menu" role="tablist">
+                        <li class="slds-tabs_default__item slds-is-active"  title="Item One" role="presentation">
+                            <a class="slds-tabs_default__link" href=""  role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Item One</a>
                         </li>
-                        <li class="slds-tabs_default__item slds-is-active" title="Item Two" role="presentation">
-                            <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">Item Two</a>
+                        <li class="slds-tabs_default__item" title="Item Two" role="presentation">
+                            <a class="slds-tabs_default__link " href=""  role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">Item Two</a>
                         </li>
                     </ul>
                     <!--============================BEGIN FIRST TAB=================================-->
-                    <div id="tab-default-1" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-1__item">
+                    <div id="tab-default-1" class="slds-tabs_default__content tab_height slds-show" role="tabpanel" aria-labelledby="tab-default-1__item">
                         <div class="slds-grid slds-gutters">
-                            <div class="slds-col slds-size_1-of-5 inner_block slds-m-left_small slds-m-right_small">
 
-                            <!-- LIST OF OBJECT FIELDS -->
-                                <apex:pageBlockSection id="fields" rendered="{!showFields}">
-                                    <apex:form >
-                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer inner_block">
-                                            <thead>
-                                            <tr class="slds-text-title_caps">
-                                                <th>
-                                                    <div class="slds-truncate" title="Opportunity Name">Fields</div>
-                                                </th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <apex:repeat value="{!fieldsNameList}" var="item">
-                                                <tr>
-                                                    <td>
-                                                        <div class="slds-truncate" title="Cloudhub">
-                                                            <apex:outputPanel >
-                                                                <apex:outputText value="{!item}"/>
-                                                                <apex:actionSupport event="onclick" action="{!showFieldParam}" rerender="fieldParam, pageBlock">
-                                                                    <apex:param name="clickedFieldName" value="{!item}"/>
-                                                                </apex:actionSupport>
-                                                            </apex:outputPanel>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </apex:repeat>
-                                            </tbody>
-                                        </table>
+                            <!-- LIST OF FIELDS -->
+                            <div class="slds-col slds-size_1-of-5 inner_block">
+                                <apex:pageBlockSection id="fields">
+                                    <apex:form  rendered="{!IF(ISNULL(selectedObject),false, true)}">
+                                        <apex:dataTable value="{!fieldsNameList}" var="item" id="theTable"
+                                                        rowClasses="slds-truncate"
+                                                        styleClass="slds-table slds-scope slds-table_bordered slds-table_cell-buffer"
+                                                        captionClass="slds-text-title_caps slds-align_absolute-center table_caption">
+                                            <apex:facet name="caption">Fields</apex:facet>
+
+                                            <apex:column colSpan="1">
+                                                <apex:outputText value="{!item}"/>
+                                                <apex:actionSupport event="onclick" action="{!showFieldParam}" rerender="fieldParam">
+                                                    <apex:param name="clickedFieldName" value="{!item}"/>
+                                                </apex:actionSupport>
+                                            </apex:column>
+                                        </apex:dataTable>
                                     </apex:form>
                                 </apex:pageBlockSection>
                             </div>
+
+                            <!-- LIST OF CUSTOM FIELDS -->
                             <div class="slds-col slds-size_1-of-5 slds-m-left_small slds-m-right_small">
-                            <!-- LIST OF CUSTOM OBJECT FIELDS -->
-                                <apex:pageBlockSection id="customFields" rendered="{!showFields}">
-                                    <apex:form id="customField">
-                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                                            <thead>
-                                            <tr class="slds-text-title_caps">
-                                                <th><div class="slds-truncate" title="Opportunity Name">Custom Fields</div></th>
-                                                <th><div class="slds-truncate" title="Opportunity Name">Action</div></th>
-                                            </tr>
+                                <apex:pageBlockSection id="customFields">
+                                    <apex:form rendered="{!customFieldsNameList != null}">
+                                        <apex:dataTable value="{!customFieldsNameList}" var="item" id="theTable"
+                                                        rowClasses="slds-truncate"
+                                                        styleClass="slds-table slds-scope slds-table_bordered slds-table_cell-buffer"
+                                                        captionClass="slds-text-title_caps slds-align_absolute-center table_caption">
+                                            <apex:facet name="caption">Custom Fields</apex:facet>
+                                            <!--<apex:facet name="caption">Action</apex:facet>-->
 
-                                            </thead>
-                                            <apex:repeat value="{!customFieldsNameList}" var="item">
-                                                <tr>
-                                                    <th>
-                                                        <apex:outputPanel >
-                                                            <apex:outputText value="{!item}"/>
-                                                            <apex:actionSupport event="onclick" action="{!showFieldParam}" rerender="fieldParam, pageBlock">
-                                                                <apex:param name="clickedFieldName" value="{!item}"/>
-                                                            </apex:actionSupport>
-                                                        </apex:outputPanel>
-                                                    </th>
-                                                    <th>
-                                                        <apex:commandLink value="Del"
-                                                                          onClick="return confirm('Well thought of?');"
-                                                                          style="color:#015ba7;"
-                                                                          action="{!deleteField}"
-                                                                          target="_parent">
-                                                            <apex:param value="{!item}" name="selectedDeleteField" assignTo="{!selectedDeleteField}"/>
-                                                        </apex:commandLink>
-                                                    </th>
-                                                </tr>
-                                            </apex:repeat>
-                                        </table>
+                                            <apex:column colSpan="1">
+
+                                                <apex:outputText value="{!item}"/>
+                                                <apex:actionSupport event="onclick" action="{!showFieldParam}" rerender="fieldParam">
+                                                    <apex:param name="clickedFieldName" value="{!item}"/>
+                                                </apex:actionSupport>
+                                            </apex:column>
+                                            <apex:column colSpan="1">
+                                                <apex:commandLink value="Del"
+                                                                  onClick="return confirm('Well thought of?');"
+                                                                  style="color:#015ba7;"
+                                                                  action="{!deleteField}"
+                                                                  target="_parent"
+                                                                  >
+                                                    <apex:param value="{!item}" name="selectedDeleteField" assignTo="{!selectedDeleteField}"/>
+                                                </apex:commandLink>
+                                            </apex:column>
+                                        </apex:dataTable>
                                     </apex:form>
                                 </apex:pageBlockSection>
                             </div>
-                            <div class="slds-col slds-size_2-of-5 slds-m-left_small slds-m-right_small">
 
                             <!--SHOW FIELD PARAMERTRES-->
-                                <apex:pageBlockSection id="fieldParam" rendered="{!IF(showBlockFieldParam=='No', false, true)}">
+                            <div class="slds-col slds-size_2-of-5 slds-m-left_small slds-m-right_small">
+                                <apex:pageBlockSection id="fieldParam" rendered="true">
                                     <apex:form >
                                         <table class="slds-table slds-table_bordered slds-table_cell-buffer">
                                             <thead>
@@ -160,16 +184,16 @@
                                     </apex:form>
                                 </apex:pageBlockSection>
                             </div>
-                            <div class="slds-col slds-size_1-of-5 slds-m-left_small slds-m-right_small">
 
                             <!--CREATE NEW FIELD-->
+                            <div class="slds-col slds-size_1-of-5 slds-m-left_small slds-m-right_small">
                                 <apex:pageBlockSection id="addField" rendered="{!IF(showBlockAddField=='No', false, true)}">
                                     <apex:form >
                                         <div class="slds-form-element">
                                             <label class="slds-form-element__label" for="input-id-01">Selected object</label>
                                             <div class="slds-form-element__control">
                                                 <apex:pageBlockSectionItem >
-                                                    <apex:outputLabel value="{!selectedObj}"/>
+                                                    <apex:outputLabel value="{!selectedObject}"/>
                                                 </apex:pageBlockSectionItem>
                                             </div>
                                         </div>
@@ -189,81 +213,116 @@
                                                 </apex:pageBlockSectionItem>
                                             </div>
                                         </div>
-                                        <apex:commandButton value="AddField" action="{!createField}" rerender="pageBlock, addField, fields, customField" styleClass="slds-button slds-button_neutral slds-m-top_x-small"/>
+                                        <apex:commandButton value="AddField" action="{!createField}"
+                                                            rerender="pageBlock, addField, fields, customField"
+                                                            styleClass="slds-button slds-button_neutral slds-m-top_x-small"/>
                                     </apex:form>
                                 </apex:pageBlockSection>
                             </div>
                         </div>
                     </div>
                      <!--============================BEGIN SECOND TAB=================================-->
-                    <div id="tab-default-2" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-2__item">
+                    <div id="tab-default-2" class="slds-tabs_default__content slds-hide tab_height" role="tabpanel" aria-labelledby="tab-default-2__item">
                         <apex:form id="selectedList">
                             <div class="slds-grid slds-gutters">
-                                <div class="slds-col slds-size_1-of-12 inner_block"></div>
+                                <div class="slds-col slds-size_1-of-12"></div>
 
-                                    <div class="slds-col slds-size_4-of-12 inner_block">
-                                        <apex:selectList size="36" value="{!leftFieldSelected}" multiselect="true">
-                                        <apex:selectOptions value="{!leftBlockFields}" />
-                                        </apex:selectList>
+                                    <div class="slds-col slds-size_4-of-12">
+                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                            <thead>
+                                                <tr class="slds-text-title_caps">
+                                                    <th>
+                                                        <div class="slds-truncate" title="Opportunity Name">
+                                                            select field
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th>
+                                                        <div class="slds-truncate">
+                                                            <apex:selectList size="36"
+                                                                             value="{!leftFieldSelected}"
+                                                                             multiselect="true"
+                                                                             styleClass="select_width">
+                                                                <apex:selectOptions value="{!leftBlockFields}" />
+                                                            </apex:selectList>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="slds-col slds-size_1-of-12 inner_block">
-                                        <apex:image value="{!URLFOR($Resource.select)}">
+                                    <div class="slds-col slds-size_1-of-12">
+                                        <apex:image value="{!URLFOR($Resource.rightAll)}" styleClass="button_img">
+                                            <apex:actionSupport event="onclick" action="{!selectAllClick}" reRender="selectedList"/>
+                                        </apex:image>
+                                        <apex:image value="{!URLFOR($Resource.right)}" styleClass="button_img">
                                             <apex:actionSupport event="onclick" action="{!selectClick}" reRender="selectedList"/>
                                         </apex:image>
+                                        <apex:image value="{!URLFOR($Resource.left)}" styleClass="button_img">
+                                            <apex:actionSupport event="onclick" action="{!unselectClick}" reRender="selectedList"/>
+                                        </apex:image>
+                                        <apex:image value="{!URLFOR($Resource.leftAll)}" styleClass="button_img">
+                                            <apex:actionSupport event="onclick" action="{!unselectAllClick}" reRender="selectedList"/>
+                                        </apex:image>
                                     </div>
-                                <div class="slds-col slds-size_1-of-12 inner_block">
-                                    <apex:image value="{!URLFOR($Resource.unselect)}">
-                                        <apex:actionSupport event="onclick" action="{!unselectClick}" reRender="selectedList"/>
-                                    </apex:image>
-                                </div>
-                                    <div class="slds-col slds-size_4-of-12 inner_block">
-                                        <apex:pageBlock >
-                                            <apex:pageBlockSection>
-                                                <apex:pageBlockSectionItem >
-                                                    <apex:selectList  size="36" value="{!rightFieldSelected}" multiSelect="true">
-                                                        <apex:selectOptions value="{!rightBlockFields}" />
-                                                    </apex:selectList>
-                                                </apex:pageBlockSectionItem>
-                                            </apex:pageBlockSection>
-                                        </apex:pageBlock>
+                                    <div class="slds-col slds-size_4-of-12">
+                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                            <thead>
+                                            <tr class="slds-text-title_caps">
+                                                <th>
+                                                    <div class="slds-truncate" title="Opportunity Name">
+                                                        selected field
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th>
+                                                    <div class="slds-truncate">
+                                                        <apex:selectList size="36"
+                                                                         value="{!rightFieldSelected}"
+                                                                         multiselect="true"
+                                                                         styleClass="select_width">
+                                                            <apex:selectOptions value="{!rightBlockFields}" />
+                                                        </apex:selectList>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
 
-                                <div class="slds-col slds-size_1-of-12 inner_block"></div>
+                                <div class="slds-col slds-size_1-of-12"></div>
                             </div>
                         </apex:form>
                     </div>
                 </div>
             </div>
         </div>
-    </apex:pageBlock>
-                <!-- SELECTED FIELDS -->
-                <!--<div class="slds-col field_block inner_block">-->
-                    <!--<apex:form id="fields">-->
-                        <!--<apex:panelGrid columns="3" id="abcd">-->
-                            <!--<apex:selectList id="sel1" value="{!leftselected}" multiselect="true" style="width:100px" size="25">-->
-                                <!--<apex:selectOptions value="{!selectedField}" />-->
-                            <!--</apex:selectList>-->
-                            <!--<apex:panelGroup >-->
-                                <!--<br/>-->
-                                <!--<apex:image value="{!$Resource.select}">-->
-                                    <!--<apex:actionSupport event="onclick" action="{!selectclick}" reRender="abcd"/>-->
-                                <!--</apex:image>-->
-                                <!--<br/><br/>-->
-                                <!--<apex:image value="{!$Resource.unselect}">-->
-                                    <!--<apex:actionSupport event="onclick" action="{!unselectclick}" reRender="abcd"/>-->
-                                <!--</apex:image>-->
-                            <!--</apex:panelGroup>-->
-                            <!--<apex:selectList id="sel2" value="{!leftselected}" multiselect="true" style="width:100px" size="25">-->
-                                <!--<apex:selectOptions value="{!selectedField}" />-->
-                            <!--</apex:selectList>-->
-                        <!--</apex:panelGrid>-->
-                    <!--</apex:form>-->
-                <!--</div>-->
-    <!--<apex:tabPanel switchType="client" selectedTab="name1" id="theTabPanel">-->
-        <!--<apex:tab label="One" name="name1" id="tabOne">content for tab one</apex:tab>-->
-        <!--<apex:tab label="Two" name="name2" id="tabTwo">content for tab two</apex:tab>-->
-    <!--</apex:tabPanel>-->
+        <script>
+            $ = jQuery.noConflict();
 
+            $(document).ready(function(){
+                $('.tabs_menu li').click(function(){
+                    if($('.tabs_menu li').hasClass('slds-is-active')){
+                        $('.tabs_menu li').removeClass('slds-is-active');
+                        $(this).addClass('slds-is-active');
+                    }
+                    var i = $(this).index(); // get number selected tab
+
+                    var tab = $(".tabs").children(".slds-tabs_default__content")[i];//select div for clicked tab
+                    if($(tab).hasClass('slds-hide')){
+                        $($(".tabs").children(".slds-tabs_default__content")).removeClass('slds-show').addClass('slds-hide');
+                        $(tab).addClass('slds-show').removeClass('slds-hide');
+                    }
+                });
+            });
+        </script>
+    </apex:pageBlock>
     </body>
     </html>
 </apex:page>

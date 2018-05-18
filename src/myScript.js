@@ -1,8 +1,4 @@
-$(document).ready(function(){
-    alert(jQuery.fn.jquery);
-});
-j$ = jQuery.noConflict();
-j$('.accountDiv').hide();
+
 
 function showFieldList(name){
     //console.log(name);
@@ -28,6 +24,6 @@ function showFieldList(name){
 //
 // }
 
-function changeTab(){
-   alert('sedfwqd');
-}
+// function changeTab(){
+//    alert('sedfwqd');
+// }
