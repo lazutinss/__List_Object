@@ -1,27 +1,26 @@
 public with sharing class MyController {
-    public String               selectedObject{get;set;} // OBJECT NAME
-    public String               clickedFieldName {get;set;}//FIELD NAME ONCLICK
-    public String               fieldLabel {get;set;}//FIELD LABEL ONCLICK
-    public String               fieldName{get;set;}//NAME NEW FIELD
-    public String               showBlockFieldParam{get; set;}//FLAG SHOW FIELD PARAM
-    public String               showBlockAddField{get; set;}//FLAG SHOW ADD FIELD
-    public String               selectedDeleteField{get; set;}//SELECTED DELETE CUSTOM FIELD
-    public Schema.DisplayType   fieldType {get;set;}//FIELD TYPE ONCLICK
-    public List<String>         fieldsNameList {get;set;}//LIST OF left OBJECT FIELDS
-    public List<String>         customFieldsNameList {get;set;}//LIST OF OBJECT CUSTOM FIELDS
-    public List<String>         fieldNameClickList{get;set;}//LIST OF OBJECT FIELD PARAM
-    public List<List<String>>   FieldsParamList{get;set;}//LIST OF LIST fieldNameClickList - поменять название
+    public String                   selectedObject      {get;set;} // OBJECT NAME
+    public String                   clickedFieldName    {get;set;}//FIELD NAME ONCLICK
+    public String                   fieldLabel          {get;set;}//FIELD LABEL ONCLICK
+    public String                   fieldName           {get;set;}//NAME NEW FIELD
+//    public String                 showBlockFieldParam{get; set;}//FLAG SHOW FIELD PARAM
+    public Boolean                   showBlockAddField  {get; set;}//FLAG SHOW ADD FIELD
+    public String                   selectedDeleteField {get; set;}//SELECTED DELETE CUSTOM FIELD
+    public Schema.DisplayType       fieldType {get;set;}//FIELD TYPE ONCLICK
+    public List<String>             fieldsNameList {get;set;}//LIST OF left OBJECT FIELDS
+    public List<String>             customFieldsNameList {get;set;}//LIST OF OBJECT CUSTOM FIELDS
+    public List<fieldParamClass>    fieldNameClickList{get;set;}//LIST OF OBJECT FIELD PARAM
+    public List<fieldParamClass>    fieldsParamList{get;set;}//LIST OF ADDING SELECTED FIELD PARAM
 
-    public List<String>         leftFieldSelected{get; set;}//LIST SELECTED FIELDS LEFT BLOCK
-    public List<string>         rightFieldSelected{get;set;}//LIST SELECTED FIELDS RIGHT BLOCK
-    Set<string>                 leftValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
-    Set<string>                 rightValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
+    public List<String>             leftFieldSelected{get; set;}//LIST SELECTED FIELDS LEFT BLOCK
+    public List<string>             rightFieldSelected{get;set;}//LIST SELECTED FIELDS RIGHT BLOCK
+    Set<string>                     leftValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
+    Set<string>                     rightValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
 
     public MyController(){
-        System.debug('customFieldsNameList is ' + customFieldsNameList);
-        FieldsParamList         = new List<List<String>>();
-        showBlockFieldParam     = 'No';
-        showBlockAddField       = 'No';
+        fieldsParamList         = new List<fieldParamClass>();
+        System.debug('fieldsParamList in contr' + fieldsParamList);
+        showBlockAddField       = false;
     }
 
 
@@ -40,7 +39,7 @@ public with sharing class MyController {
 
 //LIST OF OBJECT FIELDS
     public void showListFields(){
-        FieldsParamList.clear();
+        fieldsParamList.clear();
         rightValues.clear();
         leftValues.clear();
         fieldsNameList = new List<String>();
@@ -66,21 +65,23 @@ public with sharing class MyController {
                 Schema.DescribeFieldResult fieldResult = leftField.getDescribe();
                 leftValues.add(fieldResult.getName());
             }
-        System.debug('customFieldsNameList is ' + customFieldsNameList);
     }
 
 //SHOW FIELD PARAMERTRES
     public void showFieldParam() {
-        fieldNameClickList = new List<String>();
-        showBlockFieldParam = 'Yes';
         clickedFieldName = ApexPages.CurrentPage().getParameters().get('clickedFieldName');
         Schema.DescribeFieldResult fieldDescribe = getFieldDescribe(selectedObject, clickedFieldName);
         fieldLabel = fieldDescribe.getLabel();
         fieldType = fieldDescribe.getType();
-        fieldNameClickList.add(clickedFieldName);
-        fieldNameClickList.add(fieldLabel);
-        fieldNameClickList.add(String.valueOf(fieldType));
-        FieldsParamList.add(fieldNameClickList);
+
+        fieldNameClickList = new List<fieldParamClass>();
+        fieldNameClickList.add(new fieldParamClass(clickedFieldName, fieldLabel, fieldType));
+
+        for (fieldParamClass key : fieldNameClickList){
+            fieldsParamList.add(key);
+            System.debug('fieldsParamList in showFieldParam' + fieldsParamList);
+        }
+
     }
 
     public Schema.DescribeFieldResult getFieldDescribe(String objectName, String field){
@@ -89,27 +90,28 @@ public with sharing class MyController {
     }
 //SHOW ADDFIELDBLOCK
     public void showCreateBlock(){
-        showBlockAddField = 'Yes';
+        showBlockAddField = true;
     }
 
 //CREATE NEW FIELD
     public void createField(){
         //System.debug('имя объекта  '+selectedObject+'; имя поля '+fieldName);
         MetadataService.MetadataPort service = new MetadataService.MetadataPort();
-        service.SessionHeader = new MetadataService.SessionHeader_element();
-        service.SessionHeader.sessionId = UserInfo.getSessionId();
-        List<MetadataService.Metadata> fields = new List<MetadataService.Metadata>();
-        MetadataService.CustomField customField = new MetadataService.CustomField();
-        //customField.fullName = 'Account.myCustomField__c';
-        customField.fullName = selectedObject + '.' + fieldName + '__c';
-        //customField.label = 'MyTestField2';
-        customField.label = fieldName;
-        customField.defaultvalue = 'false';
-        //customField.sharingModel = 'ReadWrite';
-        customField.type_x = 'Checkbox';
-        fields.add(customField);
-        List<MetadataService.SaveResult> results = service.createMetadata(new MetadataService.Metadata[] { customField });
 
+        service.SessionHeader           = new MetadataService.SessionHeader_element();
+        service.SessionHeader.sessionId = UserInfo.getSessionId();
+
+        List<MetadataService.Metadata>  fields      = new List<MetadataService.Metadata>();
+        MetadataService.CustomField     customField = new MetadataService.CustomField();
+
+        customField.fullName        = selectedObject + '.' + fieldName + '__c';
+        customField.label           = fieldName;
+        customField.defaultValue    = 'false';
+        customField.type_x          = 'Checkbox';
+
+        fields.add(customField);
+
+        List<MetadataService.SaveResult> results = service.createMetadata(new MetadataService.Metadata[] { customField });
     }
 //DELETE FIELD
     public void deleteField()
@@ -122,10 +124,20 @@ public with sharing class MyController {
         service.deleteMetadata('CustomField', new String[] { selectedObject + '.' + selectedDeleteField });
 
     }
+//WRAPPER FOR FIELD LIST PARAM
+         public class fieldParamClass{
 
-         class myInnerClass{
+             public String               clickedFieldName {get;set;}//FIELD NAME ONCLICK
+             public String               fieldLabel {get;set;}//FIELD LABEL ONCLICK
+             public Schema.DisplayType   fieldType {get;set;}//FIELD TYPE ONCLICK
 
+            public fieldParamClass(String clickedFieldName, String fieldLabel, Schema.DisplayType fieldType){
+               this.clickedFieldName    = clickedFieldName;
+               this.fieldLabel          = fieldLabel;
+               this.fieldType           = fieldType;
+            }
          }
+
 
 //================================TAB 2==============================================
     public PageReference selectClick() {
@@ -144,7 +156,7 @@ public with sharing class MyController {
         return null;
     }
 
-    public PageReference unselectClick() {
+    public PageReference unSelectClick() {
         leftFieldSelected.clear();
         for (String rightSelectList : rightFieldSelected  ) {
             rightValues.remove(rightSelectList);
@@ -153,7 +165,7 @@ public with sharing class MyController {
         return null;
     }
 
-    public PageReference unselectAllClick() {
+    public PageReference unSelectAllClick() {
         leftFieldSelected.clear();
         leftValues.addAll(rightValues);
         rightValues.clear();
@@ -161,25 +173,36 @@ public with sharing class MyController {
     }
 
    // LIST OF SELECTED OBJECT FIELDS - LEFT BLOCK
-    public List<SelectOption> getleftBlockFields(){
-        List<SelectOption> options = new List<SelectOption>();
-        List<string> tempList = new List<String>();
+    public List<SelectOption> getLeftBlockFields(){
+        List<SelectOption>  options     = new List<SelectOption>();
+        List<String>        tempList    = new List<String>();
+
         tempList.addAll(leftValues);
         tempList.sort();
-            for (String key : tempList) {
-                options.add(new SelectOption(key, key));
-            }
+
+        for (String key : tempList) {
+            options.add(new SelectOption(key, key));
+        }
+
         return options;
     }
     // LIST OF SELECTED OBJECT FIELDS - RIGHT BLOCK
     public List<SelectOption> getRightBlockFields(){
         List<SelectOption> options = new List<SelectOption>();
         List<string> tempList = new List<String>();
+
         tempList.addAll(rightValues);
         tempList.sort();
-            for(String key : tempList){
-                options.add(new SelectOption(key, key));
-            }
+
+        for(String key : tempList){
+            options.add(new SelectOption(key, key));
+        }
+
         return options;
+    }
+
+    public Boolean getFieldParamListNotEmpty() {
+
+        return fieldsParamList.size() > 0;
     }
 }

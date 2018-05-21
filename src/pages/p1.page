@@ -40,7 +40,6 @@
                  margin: 20px;
              }
             .slds-col>.button_img:first-child{
-
                 margin-top: 130px;
             }
 
@@ -130,7 +129,7 @@
                                             <apex:column colSpan="1">
 
                                                 <apex:outputText value="{!item}"/>
-                                                <apex:actionSupport event="onclick" action="{!showFieldParam}" rerender="fieldParam">
+                                                <apex:actionSupport event="onclick" action="{!showFieldParam}" rerender="fieldParam ">
                                                     <apex:param name="clickedFieldName" value="{!item}"/>
                                                 </apex:actionSupport>
                                             </apex:column>
@@ -149,10 +148,10 @@
                                 </apex:pageBlockSection>
                             </div>
 
-                            <!--SHOW FIELD PARAMERTRES-->
+                            <!--SHOW FIELD PARAMS-->
                             <div class="slds-col slds-size_2-of-5 slds-m-left_small slds-m-right_small">
-                                <apex:pageBlockSection id="fieldParam" rendered="true">
-                                    <apex:form >
+                                <apex:pageBlockSection id="fieldParam" >
+                                    <apex:form rendered="{!fieldParamListNotEmpty}">
                                         <table class="slds-table slds-table_bordered slds-table_cell-buffer">
                                             <thead>
                                             <tr class="slds-text-title_caps">
@@ -165,13 +164,13 @@
                                             <apex:repeat value="{!FieldsParamList}" var="fieldParam">
                                                 <tr>
                                                     <th>
-                                                        <apex:outputText value="{!fieldParam[0]}"/>
+                                                        <apex:outputText value="{!fieldParam.clickedFieldName}"/>
                                                     </th>
                                                     <th>
-                                                        <apex:outputText value="{!fieldParam[1]}"/>
+                                                        <apex:outputText value="{!fieldParam.fieldLabel}"/>
                                                     </th>
                                                     <th>
-                                                        <apex:outputText value="{!fieldParam[2]}"/>
+                                                        <apex:outputText value="{!fieldParam.fieldType}"/>
                                                     </th>
                                                 </tr>
                                             </apex:repeat>
@@ -187,7 +186,7 @@
 
                             <!--CREATE NEW FIELD-->
                             <div class="slds-col slds-size_1-of-5 slds-m-left_small slds-m-right_small">
-                                <apex:pageBlockSection id="addField" rendered="{!IF(showBlockAddField=='No', false, true)}">
+                                <apex:pageBlockSection id="addField" rendered="{!showBlockAddField = true}">
                                     <apex:form >
                                         <div class="slds-form-element">
                                             <label class="slds-form-element__label" for="input-id-01">Selected object</label>
