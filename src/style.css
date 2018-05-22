@@ -53,4 +53,7 @@
 .slds-col>.button_img:first-child{
     margin-top: 130px;
 }
-
+.border_button>option{
+    border-top: 1px solid #dddbda;
+    cursor: pointer;
+}
