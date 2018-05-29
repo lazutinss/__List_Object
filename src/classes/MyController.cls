@@ -1,38 +1,48 @@
 public with sharing class MyController {
-    public String                   selectedObject      {get;set;} // OBJECT NAME
-    public String                   clickedFieldName    {get;set;}//FIELD NAME ONCLICK
-    public String                   fieldLabel          {get;set;}//FIELD LABEL ONCLICK
-    public String                   fieldName           {get;set;}//NAME NEW FIELD
-    public Boolean                   showBlockAddField  {get; set;}//FLAG SHOW ADD FIELD
-    public String                   selectedDeleteField {get; set;}//SELECTED DELETE CUSTOM FIELD
-    public Schema.DisplayType       fieldType {get;set;}//FIELD TYPE ONCLICK
-    public List<String>             fieldsNameList {get;set;}//LIST OF left OBJECT FIELDS
-    public List<String>             customFieldsNameList {get;set;}//LIST OF OBJECT CUSTOM FIELDS
-    public List<fieldParamClass>    fieldNameClickList{get;set;}//LIST OF OBJECT FIELD PARAM
-    public List<fieldParamClass>    fieldsParamList{get;set;}//LIST OF ADDING SELECTED FIELD PARAM
+    public String                   selectedObject          {get;set;} // OBJECT NAME
+    public String                   clickedFieldName        {get;set;}//FIELD NAME ONCLICK
+    public String                   fieldLabel              {get;set;}//FIELD LABEL ONCLICK
+    public String                   fieldName               {get;set;}//NAME NEW FIELD
+    public Boolean                  showBlockAddField       {get;set;}//FLAG SHOW ADD FIELD
+    public String                   selectedDeleteField     {get;set;}//SELECTED DELETE CUSTOM FIELD
+    public Schema.DisplayType       fieldType               {get;set;}//FIELD TYPE ONCLICK
+    public List<String>             fieldsNameList          {get;set;}//LIST OF left OBJECT FIELDS
+    public List<String>             customFieldsNameList    {get;set;}//LIST OF OBJECT CUSTOM FIELDS
+    public List<fieldParamClass>    fieldNameClickList      {get;set;}//LIST OF OBJECT FIELD PARAM
+    public List<fieldParamClass>    fieldsParamList         {get;set;}//LIST OF ADDING SELECTED FIELD PARAM
 
-    public List<String>             leftFieldSelected{get; set;}//LIST SELECTED FIELDS LEFT BLOCK
-    public List<string>             rightFieldSelected{get;set;}//LIST SELECTED FIELDS RIGHT BLOCK
-    public Set<string>              leftValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
-    public Set<string>              rightValues = new Set<string>();//VALUES FORMED IN LEFT BLOCK
+    public String                   leftSelectedItem        {get;set;}//GET VALUE OF ONE SELECTION
+    public List<String>             leftFieldSelected       {get;set;}//LIST SELECTED FIELDS LEFT BLOCK
+    public List<string>             rightFieldSelected      {get;set;}//LIST SELECTED FIELDS RIGHT BLOCK
+    public Set<string>              leftValues              = new Set<string>();//VALUES FORMED IN LEFT BLOCK
+    public Set<string>              rightValues             = new Set<string>();//VALUES FORMED IN LEFT BLOCK
 
     public MyController(){
         fieldsParamList         = new List<fieldParamClass>();
-        System.debug('fieldsParamList in contr' + fieldsParamList);
         showBlockAddField       = false;
     }
 
 
     //LIST OF OBJECTS
-    public List<SelectOption> getObjects(){
+    public List<String> getObjects(){
         List<Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe().Values();
-        List<SelectOption> listOfObject = new List<SelectOption>();
+        List<String> listOfObject = new List<String>();
 
         for(Schema.SObjectType keyListName : globalDescribe){
-            listOfObject.add(new SelectOption(keyListName.getDescribe().getName(),keyListName.getDescribe().getName()));
+            listOfObject.add(keyListName.getDescribe().getName());
         }
         return listOfObject;
     }
+//
+//    public List<SelectOption> getObjects(){
+//        List<Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe().Values();
+//        List<SelectOption> listOfObject = new List<SelectOption>();
+//
+//        for(Schema.SObjectType keyListName : globalDescribe){
+//            listOfObject.add(new SelectOption(keyListName.getDescribe().getName(),keyListName.getDescribe().getName()));
+//        }
+//        return listOfObject;
+//    }
 
 //===============================================TAB1=========================
 
@@ -41,8 +51,8 @@ public with sharing class MyController {
         fieldsParamList.clear();
         rightValues.clear();
         leftValues.clear();
-        fieldsNameList = new List<String>();
-        customFieldsNameList = new List<String>();
+        fieldsNameList          = new List<String>();
+        customFieldsNameList    = new List<String>();
 
         Map<String, Schema.SObjectType> globalDescription   = Schema.getGlobalDescribe();
         Schema.sObjectType objType                          = globalDescription.get(selectedObject);
@@ -58,17 +68,19 @@ public with sharing class MyController {
                 }
             fieldsNameList.add(fieldResult.getName());
         }
-
+//GET LIST OF VALUE FOR SECOND TAB
         for (Schema.SObjectField leftField : mapFieldList.values()) {
 
             Schema.DescribeFieldResult fieldResult = leftField.getDescribe();
             leftValues.add(fieldResult.getName());
+            //System.debug('leftValues' + leftValues);
         }
     }
 
 //SHOW FIELD PARAMERTRES
     public void showFieldParam() {
-        clickedFieldName = ApexPages.CurrentPage().getParameters().get('clickedFieldName');
+        //clickedFieldName = ApexPages.CurrentPage().getParameters().get('clickedFieldName');
+        System.debug('clickedFieldName'+ clickedFieldName);
         Schema.DescribeFieldResult fieldDescribe = getFieldDescribe(selectedObject, clickedFieldName);
         fieldLabel = fieldDescribe.getLabel();
         fieldType = fieldDescribe.getType();
@@ -78,7 +90,7 @@ public with sharing class MyController {
 
         for (fieldParamClass key : fieldNameClickList){
             fieldsParamList.add(key);
-            System.debug('fieldsParamList in showFieldParam' + fieldsParamList);
+            //System.debug('fieldsParamList in showFieldParam' + fieldsParamList);
         }
 
     }
@@ -144,19 +156,30 @@ public with sharing class MyController {
 
 
 //================================TAB 2==============================================
-    public PageReference selectClick() {
-        rightFieldSelected.clear();
-        for(String leftSelectList : leftFieldSelected){
-            leftValues.remove(leftSelectList);
-            rightValues.add(leftSelectList);
-        }
+
+
+    public PageReference selectAllClick() {
+//        rightFieldSelected.clear();
+        rightValues.addAll(leftValues);
+        leftValues.clear();
         return null;
     }
 
-    public PageReference selectAllClick() {
-        rightFieldSelected.clear();
-        rightValues.addAll(leftvalues);
-        leftvalues.clear();
+    public PageReference unSelectAllClick() {
+//        leftFieldSelected.clear();
+        leftValues.addAll(rightValues);
+        rightValues.clear();
+        return null;
+    }
+
+    public PageReference selectClick() {
+       // rightFieldSelected.clear();
+
+//        for(String leftSelectList : leftFieldSelected){
+//            leftValues.remove(leftSelectList);
+//            rightValues.add(leftSelectList);
+//        }
+        System.debug('sel Item- ---' + leftSelectedItem);
         return null;
     }
 
@@ -169,40 +192,31 @@ public with sharing class MyController {
         return null;
     }
 
-    public PageReference unSelectAllClick() {
-        leftFieldSelected.clear();
-        leftValues.addAll(rightValues);
-        rightValues.clear();
-        return null;
-    }
+
 
    // LIST OF SELECTED OBJECT FIELDS - LEFT BLOCK
-    public List<SelectOption> getLeftBlockFields(){
+    public List<String> getLeftBlockFields(){
 
-        List<SelectOption> leftValues =  makeValueOfFieldsList(leftValues);
-        return leftValues;
-    }
-    // LIST OF SELECTED OBJECT FIELDS - RIGHT BLOCK
-    public List<SelectOption> getRightBlockFields(){
+        List<String> options = new List<String>();
 
-        List<SelectOption> leftValues =  makeValueOfFieldsList(rightValues);
-        return leftValues;
-    }
-
-    //COMMON METHOD TO GET VALUE OF LEFT AND RIGHT COLUMN OF FIELDS
-    public List<SelectOption> makeValueOfFieldsList(Set<string> valueOfColumn){
-        List<SelectOption> options = new List<SelectOption>();
-        List<string> tempList = new List<String>();
-
-        tempList.addAll(valueOfColumn);
-        tempList.sort();
-
-        for(String fieldItem : tempList){
-            options.add(new SelectOption(fieldItem, fieldItem));
+        for(String fieldItem : leftValues){
+            options.add(fieldItem);
         }
-
         return options;
     }
 
+
+
+    // LIST OF SELECTED OBJECT FIELDS - RIGHT BLOCK
+    public List<String> getRightBlockFields(){
+
+        List<String> option = new List<String>();
+
+        for (String fieldItem : rightValues){
+            option.add(fieldItem);
+        }
+
+        return option;
+    }
 
 }

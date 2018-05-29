@@ -1,8 +1,8 @@
 
 
 function showFieldList(name){
-    //console.log(name);
-    showFields(name);
+    console.log(name);
+    // showFields(name);
     return false;
 }
 //display active tab

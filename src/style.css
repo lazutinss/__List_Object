@@ -9,6 +9,7 @@
 }
 .slds-col{
     cursor: pointer;
+    margin-left: 10px;
 }
 .slds-size_1-of-3{
     width: 20% !important;
